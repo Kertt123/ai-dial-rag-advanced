@@ -1,5 +1,3 @@
-import json
-
 import requests
 
 DIAL_EMBEDDINGS = 'https://ai-proxy.lab.epam.com/openai/deployments/{model}/embeddings'
@@ -21,7 +19,7 @@ class DialEmbeddingsClient:
         self.dimensions = dimensions
         self.url = DIAL_EMBEDDINGS.format(model=deployment_name)
 
-    def get_embeddings(self, input_list: list[str]) -> dict[int, list[float]]:
+    def get_embeddings(self, input_list: list[str], dimensions: int | None = None) -> dict[int, list[float]]:
         headers = {
             "Content-Type": "application/json",
             "api-key": self.api_key
@@ -29,7 +27,7 @@ class DialEmbeddingsClient:
 
         payload = {
             "input": input_list,
-            "dimensions": self.dimensions
+            "dimensions": dimensions if dimensions is not None else self.dimensions
         }
 
         response = requests.post(self.url, headers=headers, json=payload)

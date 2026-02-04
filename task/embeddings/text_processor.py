@@ -34,7 +34,6 @@ class TextProcessor:
         file_name: str,
         chunk_size: int = 500,
         overlap: int = 50,
-        dimensions: int = 1536,
         truncate_table: bool = False
     ) -> None:
         """
@@ -44,7 +43,6 @@ class TextProcessor:
             file_name: Path to the text file to process
             chunk_size: Size of each text chunk
             overlap: Overlap between chunks
-            dimensions: Embedding dimensions
             truncate_table: Whether to truncate the vectors table before inserting
         """
         # Truncate table if needed
@@ -90,7 +88,7 @@ class TextProcessor:
         user_request: str,
         top_k: int = 5,
         min_score_threshold: float = 0.5,
-        dimensions: int = 1536
+        dimensions: int | None = None
     ) -> list[str]:
         """
         Search for relevant context based on user request.
@@ -100,13 +98,13 @@ class TextProcessor:
             user_request: The user's query text
             top_k: Number of top results to return
             min_score_threshold: Minimum distance threshold for filtering results
-            dimensions: Embedding dimensions
+            dimensions: Optional embedding dimensions (overrides client default)
 
         Returns:
             List of relevant text chunks
         """
         # Generate embeddings from user request
-        embeddings_dict = self.embeddings_client.get_embeddings([user_request])
+        embeddings_dict = self.embeddings_client.get_embeddings([user_request], dimensions=dimensions)
         query_embedding = embeddings_dict[0]
         query_embedding_str = str(query_embedding)
 
